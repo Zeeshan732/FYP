@@ -1,0 +1,125 @@
+<nav class="fixed w-full top-0 z-50 transition-transform duration-300 ease-in-out" 
+     [class.-translate-y-full]="!isNavbarVisible"
+     [class.scrolled]="isScrolled">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="backdrop-blur-md bg-white/60 border-b border-white/20 rounded-2xl mx-4 lg:mx-8 mt-3 navbar-container">
+      <div class="flex justify-between items-center py-3 px-4 lg:px-6">
+      <!-- Logo -->
+          <div class="flex items-center">
+            <a routerLink="/landing" class="text-2xl font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
+              Neuro-Kinetic
+            </a>
+          </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a routerLink="/landing" 
+           routerLinkActive="text-emerald-600" 
+           [routerLinkActiveOptions]="{exact: true}"
+           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+          Home
+        </a>
+        <a routerLink="/services" 
+           routerLinkActive="text-emerald-600" 
+           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+          Services
+        </a>
+        <!-- <a routerLink="/technology" 
+           routerLinkActive="text-emerald-600" 
+           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+          Technology
+        </a> -->
+        <a routerLink="/technology-demo" 
+           routerLinkActive="text-emerald-600" 
+           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+          Technology
+        </a>
+        <a routerLink="/research" 
+           routerLinkActive="text-emerald-600" 
+           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+          Research
+        </a>
+        <a routerLink="/contact" 
+           routerLinkActive="text-emerald-600" 
+           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+          Contact
+        </a>
+        <div class="flex items-center space-x-4">
+          <button (click)="openLoginModal()" 
+                  class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Login
+          </button>
+          <button (click)="openSignupModal()" 
+                  class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium">
+            Sign Up
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden">
+        <button (click)="toggleMobileMenu()" 
+                class="text-gray-700 hover:text-emerald-600 focus:outline-none focus:text-emerald-600">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path *ngIf="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <path *ngIf="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div *ngIf="mobileMenuOpen" class="md:hidden pb-4 mt-3 mx-4 lg:mx-8">
+      <div class="flex flex-col space-y-4 bg-white/40 backdrop-blur-sm rounded-2xl p-3 border border-white/20 mobile-menu">
+            <a routerLink="/landing" 
+               routerLinkActive="text-emerald-600" 
+               [routerLinkActiveOptions]="{exact: true}"
+               (click)="closeMobileMenu()"
+               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+              Home
+            </a>
+            <a routerLink="/services" 
+               routerLinkActive="text-emerald-600" 
+               (click)="closeMobileMenu()"
+               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+              Services
+            </a>
+            <a routerLink="/technology" 
+               routerLinkActive="text-emerald-600" 
+               (click)="closeMobileMenu()"
+               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+              Technology
+            </a>
+            <a routerLink="/technology-demo" 
+               routerLinkActive="text-emerald-600" 
+               (click)="closeMobileMenu()"
+               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+              Demo
+            </a>
+            <a routerLink="/research" 
+               routerLinkActive="text-emerald-600" 
+               (click)="closeMobileMenu()"
+               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+              Research
+            </a>
+            <a routerLink="/contact" 
+               routerLinkActive="text-emerald-600" 
+               (click)="closeMobileMenu()"
+               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+              Contact
+            </a>
+        <div class="flex flex-col space-y-2 pt-4 border-t border-gray-200">
+          <button (click)="openLoginModal()" 
+                  class="text-gray-700 hover:text-emerald-600 transition-colors font-medium text-left">
+            Login
+          </button>
+          <button (click)="openSignupModal()" 
+                  class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium text-center">
+            Sign Up
+          </button>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</nav>
