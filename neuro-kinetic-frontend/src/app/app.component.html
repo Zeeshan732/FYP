@@ -1,4 +1,21 @@
-<router-outlet></router-outlet>
+<!-- Navigation Component (Navbar or Sidebar based on route) -->
+<app-navigation></app-navigation>
+
+<!-- Header Component (shown when authenticated) -->
+<app-header></app-header>
+
+<div [class.ml-64]="isAuthenticated && !sidebarCollapsed && currentRoute !== '/landing' && currentRoute !== '/'"
+     [class.ml-20]="isAuthenticated && sidebarCollapsed && currentRoute !== '/landing' && currentRoute !== '/'"
+     [class.pt-16]="isAuthenticated && currentRoute !== '/landing' && currentRoute !== '/'"
+     class="transition-all duration-300 ease-in-out">
+  <router-outlet></router-outlet>
+</div>
+
+<!-- PrimeNG Toast -->
+<p-toast></p-toast>
+
+<!-- PrimeNG Confirm Popup (automatically injected by ConfirmationService) -->
+<p-confirmPopup></p-confirmPopup>
 
 <!-- Modal Components -->
 <app-login-modal></app-login-modal>

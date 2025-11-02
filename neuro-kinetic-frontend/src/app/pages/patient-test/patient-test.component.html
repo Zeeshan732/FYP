@@ -1,0 +1,194 @@
+<!-- Navigation Bar -->
+<app-navigation></app-navigation>
+
+<!-- Patient Test Section -->
+<section class="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white pt-24 pb-20">
+  <div class="container mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+        Parkinson's Test
+      </h1>
+      <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+        Record your voice to analyze neurological patterns. The test takes approximately 30-60 seconds.
+      </p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="max-w-3xl mx-auto mb-6">
+      <div class="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg text-sm">
+        {{ error }}
+      </div>
+    </div>
+
+    <!-- Test Introduction -->
+    <div *ngIf="!testStarted && !testCompleted" class="max-w-3xl mx-auto">
+      <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-8">
+        <h2 class="text-2xl font-bold text-emerald-400 mb-6">Before You Begin</h2>
+        <div class="space-y-4 text-gray-300 mb-8">
+          <div class="flex items-start gap-3">
+            <span class="text-emerald-400 font-bold">1.</span>
+            <p>Find a quiet environment with minimal background noise.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-emerald-400 font-bold">2.</span>
+            <p>Make sure your microphone is working properly.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-emerald-400 font-bold">3.</span>
+            <p>Click "Start Test" and allow microphone access when prompted.</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-emerald-400 font-bold">4.</span>
+            <p>Speak clearly for 30-60 seconds. You can say numbers, letters, or read a passage.</p>
+          </div>
+        </div>
+        
+        <button 
+          (click)="startTest()"
+          class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg transition-colors font-semibold text-lg shadow-lg hover:shadow-emerald-500/25"
+        >
+          Start Test
+        </button>
+      </div>
+    </div>
+
+    <!-- Recording Interface -->
+    <div *ngIf="testStarted && !testCompleted" class="max-w-3xl mx-auto">
+      <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-8">
+        <h2 class="text-2xl font-bold text-emerald-400 mb-6 text-center">Voice Recording</h2>
+        
+        <!-- Recording Status -->
+        <div class="text-center mb-8">
+          <div *ngIf="!isRecording && !audioBlob" class="mb-6">
+            <div class="w-32 h-32 mx-auto bg-emerald-600/20 rounded-full flex items-center justify-center mb-4">
+              <svg class="w-16 h-16 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+              </svg>
+            </div>
+            <p class="text-gray-300 mb-4">Ready to record</p>
+            <button 
+              (click)="startRecording()"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg transition-colors font-semibold"
+            >
+              Start Recording
+            </button>
+          </div>
+
+          <!-- Active Recording -->
+          <div *ngIf="isRecording" class="mb-6">
+            <div class="w-32 h-32 mx-auto bg-red-600/20 rounded-full flex items-center justify-center mb-4 animate-pulse">
+              <svg class="w-16 h-16 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+            </div>
+            <p class="text-3xl font-bold text-red-400 mb-2">{{ formatTime(recordingTime) }}</p>
+            <p class="text-gray-300 mb-4">Recording in progress...</p>
+            <button 
+              (click)="stopRecording()"
+              class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg transition-colors font-semibold"
+            >
+              Stop Recording
+            </button>
+          </div>
+
+          <!-- Recording Complete -->
+          <div *ngIf="audioBlob && !isRecording" class="mb-6">
+            <div class="w-32 h-32 mx-auto bg-emerald-600/20 rounded-full flex items-center justify-center mb-4">
+              <svg class="w-16 h-16 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p class="text-gray-300 mb-4">Recording complete!</p>
+            <p class="text-sm text-gray-400 mb-4">Duration: {{ formatTime(recordingTime) }}</p>
+            
+            <!-- Audio Preview -->
+            <div *ngIf="audioUrl" class="mb-6">
+              <audio [src]="audioUrl" controls class="w-full"></audio>
+            </div>
+
+            <div class="flex gap-4 justify-center">
+              <button 
+                (click)="startRecording()"
+                class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold"
+              >
+                Record Again
+              </button>
+              <button 
+                (click)="submitTest()"
+                [disabled]="isProcessing"
+                class="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg transition-colors font-semibold"
+              >
+                {{ isProcessing ? 'Processing...' : 'Submit Test' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Processing -->
+          <div *ngIf="isProcessing" class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-400 mx-auto mb-4"></div>
+            <p class="text-gray-300">Analyzing your voice recording...</p>
+            <p class="text-sm text-gray-400 mt-2">This may take a few moments</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Results -->
+    <div *ngIf="testCompleted && testResult" class="max-w-3xl mx-auto">
+      <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-8">
+        <h2 class="text-2xl font-bold text-emerald-400 mb-6 text-center">Test Results</h2>
+        
+        <div class="space-y-6">
+          <!-- Result Badge -->
+          <div class="text-center">
+            <div [class]="'inline-block px-6 py-3 rounded-lg border text-lg font-semibold ' + getResultBadgeColor(testResult.testResult)">
+              {{ testResult.testResult }}
+            </div>
+          </div>
+
+          <!-- Accuracy -->
+          <div class="bg-white/5 rounded-lg p-6 text-center">
+            <p class="text-gray-300 mb-2">Confidence Score</p>
+            <p class="text-4xl font-bold text-emerald-400">{{ testResult.accuracy }}%</p>
+          </div>
+
+          <!-- Test Details -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-white/5 rounded-lg p-4">
+              <p class="text-sm text-gray-400 mb-1">Test Date</p>
+              <p class="text-white font-semibold">{{ testResult.testDate | date:'short' }}</p>
+            </div>
+            <div class="bg-white/5 rounded-lg p-4">
+              <p class="text-sm text-gray-400 mb-1">Status</p>
+              <p class="text-white font-semibold">{{ testResult.status }}</p>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div *ngIf="testResult.analysisNotes" class="bg-white/5 rounded-lg p-4">
+            <p class="text-sm text-gray-400 mb-2">Analysis Notes</p>
+            <p class="text-gray-300">{{ testResult.analysisNotes }}</p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-4 justify-center pt-4">
+            <button 
+              (click)="startNewTest()"
+              class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold"
+            >
+              Take Another Test
+            </button>
+            <button 
+              (click)="viewMyTests()"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold"
+            >
+              View My Tests
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+

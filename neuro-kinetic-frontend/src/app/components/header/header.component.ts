@@ -1,0 +1,185 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service';
+import { SidebarService } from '../../services/sidebar.service';
+
+@Component({
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss']
+})
+export class HeaderComponent implements OnInit, OnDestroy {
+  breadcrumbPath: string = '';
+  currentRoute: string = '';
+  currentUser: any = null;
+  sidebarCollapsed = false;
+  isLandingPage: boolean = false;
+  
+  private routerSubscription?: Subscription;
+  private userSubscription?: Subscription;
+  private sidebarSubscription?: Subscription;
+
+  // Route to label mapping
+  routeLabels: { [key: string]: string } = {
+    'landing': 'Home',
+    'home': 'Home',
+    'research': 'Research',
+    'publications': 'Publications',
+    'publication-detail': 'Publication Details',
+    'technology': 'Technology',
+    'technology-demo': 'Technology Demo',
+    'contact': 'Contact',
+    'patient-test': 'Take Test',
+    'test-records': 'Test Records',
+    'metrics': 'Metrics Dashboard',
+    'cross-validation': 'Cross Validation',
+    'admin-dashboard': 'Admin Dashboard',
+    'clinical-use': 'Clinical Use',
+    'collaboration': 'Collaboration',
+    'voice-analysis': 'Voice Analysis',
+    'gait-analysis': 'Gait Analysis',
+    'login': 'Login',
+    'signup': 'Sign Up'
+  };
+
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService,
+    private sidebarService: SidebarService
+  ) {}
+
+  ngOnInit() {
+    // Subscribe to router events
+    this.routerSubscription = this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe((event) => {
+      const route = event.urlAfterRedirects || event.url;
+      this.isLandingPage = route === '/landing' || route === '/';
+      this.updateBreadcrumb();
+    });
+
+    // Initial route check
+    const initialRoute = this.router.url;
+    this.isLandingPage = initialRoute === '/landing' || initialRoute === '/';
+    
+    // Initial breadcrumb update
+    this.updateBreadcrumb();
+
+    // Subscribe to user changes
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+
+    // Subscribe to sidebar state
+    this.sidebarSubscription = this.sidebarService.sidebarCollapsed$.subscribe(collapsed => {
+      this.sidebarCollapsed = collapsed;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
+    if (this.sidebarSubscription) {
+      this.sidebarSubscription.unsubscribe();
+    }
+  }
+
+  updateBreadcrumb() {
+    let route = this.activatedRoute;
+    const breadcrumbs: string[] = [];
+
+    // Always start with Home
+    breadcrumbs.push('Home');
+
+    // Build breadcrumb path
+    while (route.firstChild) {
+      route = route.firstChild;
+      const routePath = route.snapshot.url.map(segment => segment.path).join('/');
+      
+      if (routePath) {
+        // Check if it's a detail route (with ID)
+        const segments = routePath.split('/');
+        const baseRoute = segments[0];
+        
+        if (this.routeLabels[baseRoute]) {
+          if (segments.length > 1 && segments[1]) {
+            // Detail view (e.g., publications/:id)
+            breadcrumbs.push(this.routeLabels[baseRoute]);
+            breadcrumbs.push('Details');
+          } else {
+            breadcrumbs.push(this.routeLabels[baseRoute]);
+          }
+        }
+      }
+    }
+
+    // Get the final route path
+    const urlSegments = this.router.url.split('/').filter(segment => segment);
+    
+    if (urlSegments.length > 0) {
+      const currentPath = urlSegments[urlSegments.length - 1];
+      this.currentRoute = this.routeLabels[currentPath] || this.formatRouteName(currentPath);
+      
+      // Build breadcrumb from URL
+      const breadcrumbParts: string[] = ['Home'];
+      urlSegments.forEach((segment, index) => {
+        const label = this.routeLabels[segment] || this.formatRouteName(segment);
+        if (label && label !== 'Details') {
+          breadcrumbParts.push(label);
+        }
+      });
+      
+      this.breadcrumbPath = breadcrumbParts.join(' / ');
+    } else {
+      this.currentRoute = 'Home';
+      this.breadcrumbPath = 'Home';
+    }
+  }
+
+  formatRouteName(route: string): string {
+    // Convert route name to readable format
+    return route
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
+  getUserInitials(): string {
+    if (this.currentUser?.firstName && this.currentUser?.lastName) {
+      return `${this.currentUser.firstName[0]}${this.currentUser.lastName[0]}`.toUpperCase();
+    } else if (this.currentUser?.firstName) {
+      return this.currentUser.firstName[0].toUpperCase();
+    } else if (this.currentUser?.email) {
+      return this.currentUser.email[0].toUpperCase();
+    }
+    return 'U';
+  }
+
+  getUserDisplayName(): string {
+    if (this.currentUser?.firstName && this.currentUser?.lastName) {
+      return `${this.currentUser.firstName} ${this.currentUser.lastName}`;
+    } else if (this.currentUser?.firstName) {
+      return this.currentUser.firstName;
+    } else if (this.currentUser?.email) {
+      return this.currentUser.email;
+    }
+    return 'User';
+  }
+
+  isAdmin(): boolean {
+    return this.currentUser?.role === 'Admin';
+  }
+
+  navigateToProfile() {
+    // Can navigate to profile page if exists
+    // this.router.navigate(['/profile']);
+  }
+}
+

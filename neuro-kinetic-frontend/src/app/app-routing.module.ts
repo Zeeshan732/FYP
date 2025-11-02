@@ -10,6 +10,13 @@ import { TechnologyComponent } from './pages/technology/technology.component';
 import { ResearchComponent } from './pages/research/research.component';
 import { ClinicalUseComponent } from './pages/clinical-use/clinical-use.component';
 import { CollaborationComponent } from './pages/collaboration/collaboration.component';
+import { PublicationsComponent } from './pages/publications/publications.component';
+import { PublicationDetailComponent } from './pages/publication-detail/publication-detail.component';
+import { MetricsDashboardComponent } from './pages/metrics-dashboard/metrics-dashboard.component';
+import { CrossValidationComponent } from './pages/cross-validation/cross-validation.component';
+import { PatientTestComponent } from './pages/patient-test/patient-test.component';
+import { TestRecordsComponent } from './pages/test-records/test-records.component';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -21,6 +28,13 @@ const routes: Routes = [
       { path: 'technology', component: TechnologyComponent },
       { path: 'technology-demo', component: TechnologyDemoComponent },
   { path: 'research', component: ResearchComponent },
+  { path: 'publications', component: PublicationsComponent },
+  { path: 'publications/:id', component: PublicationDetailComponent },
+  { path: 'metrics', component: MetricsDashboardComponent },
+  { path: 'cross-validation', component: CrossValidationComponent },
+  { path: 'patient-test', component: PatientTestComponent },
+  { path: 'test-records', component: TestRecordsComponent },
+  { path: 'admin-dashboard', component: AdminDashboardComponent },
   { path: 'clinical-use', component: ClinicalUseComponent },
   { path: 'collaboration', component: CollaborationComponent },
   { path: 'voice-analysis', loadChildren: () => import('./modules/voice-analysis/voice-analysis.module').then(m => m.VoiceAnalysisModule) },

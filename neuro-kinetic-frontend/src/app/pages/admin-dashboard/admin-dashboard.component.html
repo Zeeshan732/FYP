@@ -1,0 +1,141 @@
+<!-- Navigation Bar -->
+<app-navigation></app-navigation>
+
+<!-- Admin Dashboard Section -->
+<section class="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white pt-24 pb-20">
+  <div class="container mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+        Admin Dashboard
+      </h1>
+      <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+        Analytics and statistics for Parkinson's test system
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="max-w-6xl mx-auto mb-8 flex gap-4 justify-end">
+      <button 
+        (click)="refreshData()"
+        [disabled]="loading"
+        class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg transition-colors font-semibold"
+      >
+        {{ loading ? 'Loading...' : 'Refresh' }}
+      </button>
+      <button 
+        (click)="navigateToTestRecords()"
+        class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors font-semibold"
+      >
+        View All Records
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="max-w-6xl mx-auto text-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-400 mx-auto mb-4"></div>
+      <p class="text-gray-300">Loading analytics...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="max-w-6xl mx-auto mb-6">
+      <div class="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg text-sm">
+        {{ error }}
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div *ngIf="analytics && !loading" class="max-w-6xl mx-auto mb-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Users -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
+          <div class="text-4xl font-bold text-emerald-400 mb-2">{{ analytics.totalUsers | number }}</div>
+          <div class="text-sm text-gray-300">Total Users</div>
+        </div>
+
+        <!-- Total Tests -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
+          <div class="text-4xl font-bold text-blue-400 mb-2">{{ analytics.totalTests | number }}</div>
+          <div class="text-sm text-gray-300">Total Tests</div>
+        </div>
+
+        <!-- Positive Cases -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
+          <div class="text-4xl font-bold text-red-400 mb-2">{{ analytics.positiveCases | number }}</div>
+          <div class="text-sm text-gray-300">Positive Cases</div>
+          <div class="text-xs text-gray-400 mt-1">{{ getPositivePercentage() }}%</div>
+        </div>
+
+        <!-- Negative Cases -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
+          <div class="text-4xl font-bold text-green-400 mb-2">{{ analytics.negativeCases | number }}</div>
+          <div class="text-sm text-gray-300">Negative Cases</div>
+          <div class="text-xs text-gray-400 mt-1">{{ getNegativePercentage() }}%</div>
+        </div>
+      </div>
+
+      <!-- Additional Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Uncertain Cases -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
+          <div class="text-3xl font-bold text-yellow-400 mb-2">{{ analytics.uncertainCases | number }}</div>
+          <div class="text-sm text-gray-300">Uncertain Cases</div>
+          <div class="text-xs text-gray-400 mt-1">{{ getUncertainPercentage() }}%</div>
+        </div>
+
+        <!-- Average Accuracy -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
+          <div class="text-3xl font-bold text-teal-400 mb-2">{{ analytics.averageAccuracy }}%</div>
+          <div class="text-sm text-gray-300">Average Accuracy</div>
+        </div>
+
+        <!-- Test Completion Rate -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
+          <div class="text-3xl font-bold text-purple-400 mb-2">
+            {{ getTestsPerUser() }}
+          </div>
+          <div class="text-sm text-gray-300">Tests per User</div>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Usage by Day -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+          <h3 class="text-xl font-bold text-emerald-400 mb-4">Usage by Day (Last 30 Days)</h3>
+          <div class="h-64">
+            <canvas #usageByDayChart></canvas>
+          </div>
+        </div>
+
+        <!-- Usage by Month -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+          <h3 class="text-xl font-bold text-emerald-400 mb-4">Usage by Month (Last 12 Months)</h3>
+          <div class="h-64">
+            <canvas #usageByMonthChart></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 2 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Usage by Year -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+          <h3 class="text-xl font-bold text-emerald-400 mb-4">Usage by Year (Last 5 Years)</h3>
+          <div class="h-64">
+            <canvas #usageByYearChart></canvas>
+          </div>
+        </div>
+
+        <!-- Result Distribution -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6">
+          <h3 class="text-xl font-bold text-emerald-400 mb-4">Test Results Distribution</h3>
+          <div class="h-64">
+            <canvas #resultDistributionChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+

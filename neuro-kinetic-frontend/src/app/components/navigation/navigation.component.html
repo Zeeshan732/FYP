@@ -1,125 +1,293 @@
-<nav class="fixed w-full top-0 z-50 transition-transform duration-300 ease-in-out" 
+<!-- Top Navbar (Public/Not Authenticated OR Landing Page) -->
+<nav *ngIf="!isAuthenticated || isLandingPage" 
+     class="fixed w-full top-0 z-50 transition-transform duration-300 ease-in-out" 
      [class.-translate-y-full]="!isNavbarVisible"
      [class.scrolled]="isScrolled">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="backdrop-blur-md bg-white/60 border-b border-white/20 rounded-2xl mx-4 lg:mx-8 mt-3 navbar-container">
       <div class="flex justify-between items-center py-3 px-4 lg:px-6">
-      <!-- Logo -->
-          <div class="flex items-center">
-            <a routerLink="/landing" class="text-2xl font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
-              Neuro-Kinetic
-            </a>
+        <!-- Logo -->
+        <div class="flex items-center">
+          <a routerLink="/landing" class="text-2xl font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
+            Neuro-Kinetic
+          </a>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center space-x-6">
+          <a routerLink="/landing" 
+             routerLinkActive="text-emerald-600" 
+             [routerLinkActiveOptions]="{exact: true}"
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Home
+          </a>
+          <a routerLink="/research" 
+             routerLinkActive="text-emerald-600" 
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Research
+          </a>
+          <a routerLink="/publications" 
+             routerLinkActive="text-emerald-600" 
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Publications
+          </a>
+          <a routerLink="/technology" 
+             routerLinkActive="text-emerald-600" 
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Technology
+          </a>
+          <a routerLink="/technology-demo" 
+             routerLinkActive="text-emerald-600" 
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Demo
+          </a>
+          <a routerLink="/contact" 
+             routerLinkActive="text-emerald-600" 
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Contact
+          </a>
+
+          <!-- Auth Buttons -->
+          <div class="flex items-center space-x-4 pl-4 border-l border-gray-300">
+            <button (click)="openLoginModal()" 
+                    class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+              Login
+            </button>
+            <button (click)="openSignupModal()" 
+                    class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium">
+              Sign Up
+            </button>
           </div>
+        </div>
 
-      <!-- Desktop Navigation -->
-      <div class="hidden md:flex items-center space-x-8">
-        <a routerLink="/landing" 
-           routerLinkActive="text-emerald-600" 
-           [routerLinkActiveOptions]="{exact: true}"
-           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-          Home
-        </a>
-        <a routerLink="/services" 
-           routerLinkActive="text-emerald-600" 
-           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-          Services
-        </a>
-        <!-- <a routerLink="/technology" 
-           routerLinkActive="text-emerald-600" 
-           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-          Technology
-        </a> -->
-        <a routerLink="/technology-demo" 
-           routerLinkActive="text-emerald-600" 
-           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-          Technology
-        </a>
-        <a routerLink="/research" 
-           routerLinkActive="text-emerald-600" 
-           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-          Research
-        </a>
-        <a routerLink="/contact" 
-           routerLinkActive="text-emerald-600" 
-           class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-          Contact
-        </a>
-        <div class="flex items-center space-x-4">
-          <button (click)="openLoginModal()" 
-                  class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-            Login
-          </button>
-          <button (click)="openSignupModal()" 
-                  class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium">
-            Sign Up
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden">
+          <button (click)="toggleMobileMenu()" 
+                  class="text-gray-700 hover:text-emerald-600 focus:outline-none focus:text-emerald-600">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path *ngIf="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              <path *ngIf="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
       </div>
 
-      <!-- Mobile Menu Button -->
-      <div class="md:hidden">
-        <button (click)="toggleMobileMenu()" 
-                class="text-gray-700 hover:text-emerald-600 focus:outline-none focus:text-emerald-600">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path *ngIf="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            <path *ngIf="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile Navigation -->
-    <div *ngIf="mobileMenuOpen" class="md:hidden pb-4 mt-3 mx-4 lg:mx-8">
-      <div class="flex flex-col space-y-4 bg-white/40 backdrop-blur-sm rounded-2xl p-3 border border-white/20 mobile-menu">
-            <a routerLink="/landing" 
-               routerLinkActive="text-emerald-600" 
-               [routerLinkActiveOptions]="{exact: true}"
-               (click)="closeMobileMenu()"
-               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-              Home
-            </a>
-            <a routerLink="/services" 
-               routerLinkActive="text-emerald-600" 
-               (click)="closeMobileMenu()"
-               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-              Services
-            </a>
-            <a routerLink="/technology" 
-               routerLinkActive="text-emerald-600" 
-               (click)="closeMobileMenu()"
-               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-              Technology
-            </a>
-            <a routerLink="/technology-demo" 
-               routerLinkActive="text-emerald-600" 
-               (click)="closeMobileMenu()"
-               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-              Demo
-            </a>
-            <a routerLink="/research" 
-               routerLinkActive="text-emerald-600" 
-               (click)="closeMobileMenu()"
-               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-              Research
-            </a>
-            <a routerLink="/contact" 
-               routerLinkActive="text-emerald-600" 
-               (click)="closeMobileMenu()"
-               class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
-              Contact
-            </a>
-        <div class="flex flex-col space-y-2 pt-4 border-t border-gray-200">
-          <button (click)="openLoginModal()" 
-                  class="text-gray-700 hover:text-emerald-600 transition-colors font-medium text-left">
-            Login
-          </button>
-          <button (click)="openSignupModal()" 
-                  class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium text-center">
-            Sign Up
-          </button>
+      <!-- Mobile Navigation -->
+      <div *ngIf="mobileMenuOpen" class="md:hidden pb-4 px-4">
+        <div class="flex flex-col space-y-4 pt-4 border-t border-gray-200">
+          <a routerLink="/landing" 
+             routerLinkActive="text-emerald-600" 
+             [routerLinkActiveOptions]="{exact: true}"
+             (click)="closeMobileMenu()"
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Home
+          </a>
+          <a routerLink="/research" 
+             routerLinkActive="text-emerald-600" 
+             (click)="closeMobileMenu()"
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Research
+          </a>
+          <a routerLink="/publications" 
+             routerLinkActive="text-emerald-600" 
+             (click)="closeMobileMenu()"
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Publications
+          </a>
+          <a routerLink="/technology" 
+             routerLinkActive="text-emerald-600" 
+             (click)="closeMobileMenu()"
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Technology
+          </a>
+          <a routerLink="/technology-demo" 
+             routerLinkActive="text-emerald-600" 
+             (click)="closeMobileMenu()"
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Demo
+          </a>
+          <a routerLink="/contact" 
+             routerLinkActive="text-emerald-600" 
+             (click)="closeMobileMenu()"
+             class="text-gray-700 hover:text-emerald-600 transition-colors font-medium">
+            Contact
+          </a>
+          <div class="flex flex-col space-y-2 pt-4 border-t border-gray-200">
+            <button (click)="openLoginModal()" 
+                    class="text-gray-700 hover:text-emerald-600 transition-colors font-medium text-left">
+              Login
+            </button>
+            <button (click)="openSignupModal()" 
+                    class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium text-center">
+              Sign Up
+            </button>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   </div>
 </nav>
+
+<!-- Sidebar (Authenticated Users - NOT on Landing Page) -->
+<aside *ngIf="isAuthenticated && !isLandingPage" 
+       class="fixed left-0 top-0 h-full z-50 bg-slate-900 border-r border-white/10 transition-all duration-300 ease-in-out"
+       [class.w-64]="!sidebarCollapsed"
+       [class.w-20]="sidebarCollapsed">
+  <!-- Sidebar Content -->
+  <div class="flex flex-col h-full">
+    <!-- Sidebar Header -->
+    <div class="flex items-center justify-between p-4 border-b border-white/10">
+      <div class="flex items-center space-x-3" [class.opacity-0]="sidebarCollapsed" [class.w-0]="sidebarCollapsed" [class.overflow-hidden]="sidebarCollapsed">
+        <div class="text-xl font-bold text-emerald-400 whitespace-nowrap">Neuro-Kinetic</div>
+      </div>
+      <button (click)="toggleSidebar()" 
+              class="p-2 rounded-lg hover:bg-white/10 text-gray-300 hover:text-white transition-colors">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" [class.rotate-180]="sidebarCollapsed">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+      <!-- Public Links -->
+      <a routerLink="/landing" 
+         routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+         [routerLinkActiveOptions]="{exact: true}"
+         class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group"
+         [title]="sidebarCollapsed ? 'Home' : ''">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Home</span>
+      </a>
+
+      <a routerLink="/research" 
+         routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+         class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group"
+         [title]="sidebarCollapsed ? 'Research' : ''">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Research</span>
+      </a>
+
+      <a routerLink="/publications" 
+         routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+         class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group"
+         [title]="sidebarCollapsed ? 'Publications' : ''">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Publications</span>
+      </a>
+
+      <a routerLink="/technology" 
+         routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+         class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group"
+         [title]="sidebarCollapsed ? 'Technology' : ''">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+        <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Technology</span>
+      </a>
+
+      <a routerLink="/technology-demo" 
+         routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+         class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group"
+         [title]="sidebarCollapsed ? 'Demo' : ''">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Demo</span>
+      </a>
+
+      <!-- User Links Section -->
+      <div class="pt-4 mt-4 border-t border-white/10" [class.hidden]="sidebarCollapsed && !isAuthenticated">
+        <div [class.hidden]="sidebarCollapsed" class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">My Account</div>
+        <a routerLink="/patient-test" 
+           routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+           class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group mt-2"
+           [title]="sidebarCollapsed ? 'Take Test' : ''">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+          <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Take Test</span>
+        </a>
+
+        <a routerLink="/test-records" 
+           routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+           class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group"
+           [title]="sidebarCollapsed ? 'My Tests' : ''">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">My Tests</span>
+        </a>
+      </div>
+
+      <!-- Researcher/Admin Links -->
+      <div *ngIf="isResearcher || isAdmin" class="pt-4 mt-4 border-t border-white/10">
+        <div [class.hidden]="sidebarCollapsed" class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Research</div>
+        <a routerLink="/metrics" 
+           routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+           class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group mt-2"
+           [title]="sidebarCollapsed ? 'Metrics' : ''">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Metrics</span>
+        </a>
+
+        <a routerLink="/cross-validation" 
+           routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+           class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group"
+           [title]="sidebarCollapsed ? 'Validation' : ''">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Validation</span>
+        </a>
+      </div>
+
+      <!-- Admin Links -->
+      <div *ngIf="isAdmin" class="pt-4 mt-4 border-t border-white/10">
+        <div [class.hidden]="sidebarCollapsed" class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Admin</div>
+        <a routerLink="/admin-dashboard" 
+           routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+           class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group mt-2"
+           [title]="sidebarCollapsed ? 'Admin Dashboard' : ''">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Dashboard</span>
+        </a>
+      </div>
+
+      <!-- Contact Link -->
+      <a routerLink="/contact" 
+         routerLinkActive="bg-emerald-600/20 text-emerald-400 border-emerald-400"
+         class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-colors group mt-4"
+         [title]="sidebarCollapsed ? 'Contact' : ''">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Contact</span>
+      </a>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-t border-white/10">
+      <button (click)="logout()" 
+              class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-red-600/20 hover:text-red-400 transition-colors group"
+              [title]="sidebarCollapsed ? 'Logout' : ''">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span [class.hidden]="sidebarCollapsed" class="whitespace-nowrap">Logout</span>
+      </button>
+    </div>
+  </div>
+</aside>
+

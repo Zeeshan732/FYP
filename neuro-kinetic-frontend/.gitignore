@@ -40,3 +40,17 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Backend (if accidentally included)
+../neuro-kinetic-backend/
+neuro-kinetic-backend/
+*.sln
+*.csproj
+*.cs
+*.csproj.user
+appsettings.json
+appsettings.*.json
+
+# Documentation files (optional - uncomment if you don't want to commit these)
+# *.md
+# !README.md

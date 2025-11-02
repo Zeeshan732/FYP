@@ -1,0 +1,243 @@
+<!-- Navigation Bar -->
+<app-navigation></app-navigation>
+
+<!-- Test Records Section -->
+<section class="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white pb-20">
+  <div class="container mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+        Test Records
+      </h1>
+      <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+        {{ isAdmin ? 'View all user test records' : 'View your test history' }}
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="max-w-6xl mx-auto mb-8 flex justify-between items-center">
+      <button 
+        (click)="takeNewTest()"
+        class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold"
+      >
+        Take New Test
+      </button>
+    </div>
+
+    <!-- Filters and Controls -->
+    <div class="max-w-6xl mx-auto mb-8">
+      <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4">
+        <div class="flex flex-col md:flex-row gap-4 items-end">
+          <!-- Status Filter -->
+          <div class="flex-1">
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Filter by Status</label>
+            <select 
+              [(ngModel)]="filterStatus"
+              (change)="onFilterChange()"
+              class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white backdrop-blur-sm"
+            >
+              <option value="">All Status</option>
+              <option value="Completed">Completed</option>
+              <option value="Pending">Pending</option>
+              <option value="Failed">Failed</option>
+            </select>
+          </div>
+
+          <!-- Result Filter -->
+          <div class="flex-1">
+            <label class="block text-sm font-semibold text-gray-300 mb-2">Filter by Result</label>
+            <select 
+              [(ngModel)]="filterResult"
+              (change)="onFilterChange()"
+              class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white backdrop-blur-sm"
+            >
+              <option value="">All Results</option>
+              <option value="Positive">Positive</option>
+              <option value="Negative">Negative</option>
+              <option value="Uncertain">Uncertain</option>
+            </select>
+          </div>
+
+          <!-- Sort Controls -->
+          <div class="flex gap-2">
+            <select 
+              [(ngModel)]="sortBy"
+              (change)="onSortChange(sortBy)"
+              class="px-4 py-3 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white backdrop-blur-sm"
+            >
+              <option value="testDate">Sort by Date</option>
+              <option value="accuracy">Sort by Accuracy</option>
+              <option value="testResult">Sort by Result</option>
+            </select>
+            <button 
+              (click)="onSortChange(sortBy)"
+              class="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+              [title]="sortOrder === 'asc' ? 'Ascending' : 'Descending'"
+            >
+              {{ sortOrder === 'asc' ? '↑' : '↓' }}
+            </button>
+          </div>
+
+          <!-- Clear Filter -->
+          <button 
+            *ngIf="hasActiveFilters()"
+            (click)="clearFilters()"
+            class="px-4 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-gray-300 hover:text-white rounded-lg transition-colors text-sm"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="max-w-6xl mx-auto mb-6">
+      <div class="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg text-sm">
+        {{ error }}
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="max-w-6xl mx-auto text-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-400 mx-auto mb-4"></div>
+      <p class="text-gray-300">Loading test records...</p>
+    </div>
+
+    <!-- Records Table -->
+    <div *ngIf="!loading && records.length > 0" class="max-w-6xl mx-auto mb-8">
+      <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-white/5">
+              <tr>
+                <th class="px-6 py-4 text-left text-sm font-semibold text-emerald-400 cursor-pointer hover:text-emerald-300" 
+                    (click)="onSortChange('userName')">
+                  User Name
+                </th>
+                <th class="px-6 py-4 text-left text-sm font-semibold text-emerald-400 cursor-pointer hover:text-emerald-300" 
+                    (click)="onSortChange('testDate')">
+                  Test Date
+                </th>
+                <th class="px-6 py-4 text-center text-sm font-semibold text-emerald-400 cursor-pointer hover:text-emerald-300" 
+                    (click)="onSortChange('testResult')">
+                  Result
+                </th>
+                <th class="px-6 py-4 text-center text-sm font-semibold text-emerald-400 cursor-pointer hover:text-emerald-300" 
+                    (click)="onSortChange('accuracy')">
+                  Accuracy
+                </th>
+                <th class="px-6 py-4 text-center text-sm font-semibold text-emerald-400 cursor-pointer hover:text-emerald-300" 
+                    (click)="onSortChange('status')">
+                  Status
+                </th>
+                <th class="px-6 py-4 text-center text-sm font-semibold text-emerald-400">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10">
+              <tr *ngFor="let record of records" class="hover:bg-white/5 transition-colors">
+                <td class="px-6 py-4 text-sm text-gray-300">{{ record.userName }}</td>
+                <td class="px-6 py-4 text-sm text-gray-300">{{ record.testDate | date:'short' }}</td>
+                <td class="px-6 py-4 text-center">
+                  <span [class]="'px-3 py-1 rounded text-xs font-semibold border ' + getResultBadgeColor(record.testResult)">
+                    {{ record.testResult }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-center text-sm text-gray-300">{{ record.accuracy }}%</td>
+                <td class="px-6 py-4 text-center">
+                  <span [class]="'px-3 py-1 rounded text-xs font-semibold border ' + getStatusBadgeColor(record.status)">
+                    {{ record.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <div class="flex gap-2 justify-center items-center">
+                    <p-button 
+                      icon="pi pi-eye"
+                      (onClick)="viewRecord(record.id)"
+                      [outlined]="true"
+                      severity="success"
+                      [rounded]="true"
+                      pTooltip="View Details"
+                      tooltipPosition="top">
+                    </p-button>
+                    <p-button 
+                      *ngIf="isAdmin"
+                      icon="pi pi-pencil"
+                      (onClick)="editRecord(record.id)"
+                      [outlined]="true"
+                      severity="info"
+                      [rounded]="true"
+                      pTooltip="Edit Record"
+                      tooltipPosition="top">
+                    </p-button>
+                    <p-button 
+                      *ngIf="isAdmin"
+                      icon="pi pi-trash"
+                      (onClick)="deleteRecord($event, record.id)"
+                      [outlined]="true"
+                      severity="danger"
+                      [rounded]="true"
+                      pTooltip="Delete Record"
+                      tooltipPosition="top">
+                    </p-button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && records.length === 0" class="max-w-6xl mx-auto text-center py-12">
+      <p class="text-gray-300 text-xl mb-4">No test records found</p>
+      <p class="text-gray-500 mb-6">Try adjusting your filters or take a new test</p>
+      <button 
+        (click)="takeNewTest()"
+        class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold"
+      >
+        Take New Test
+      </button>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!loading && totalPages > 1" class="max-w-6xl mx-auto">
+      <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="text-sm text-gray-300">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalCount) }} of {{ totalCount }} records
+          </div>
+          <div class="flex items-center gap-2">
+            <button 
+              (click)="previousPage()"
+              [disabled]="!hasPrevious"
+              class="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+            >
+              Previous
+            </button>
+            <span class="px-4 py-2 text-gray-300">
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
+            <button 
+              (click)="nextPage()"
+              [disabled]="!hasNext"
+              class="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Record Dialog -->
+  <app-test-record-dialog
+    [(visible)]="showDialog"
+    [record]="selectedRecord"
+    [isEditMode]="isEditMode"
+    (save)="onSaveRecord($event)"
+    (cancel)="onCancelDialog()">
+  </app-test-record-dialog>
+</section>
+
