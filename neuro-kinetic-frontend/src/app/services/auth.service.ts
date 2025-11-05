@@ -45,6 +45,7 @@ export class AuthService {
     lastName: string;
     institution?: string;
     researchFocus?: string;
+    role?: 'Public' | 'Researcher' | 'MedicalProfessional';
   }): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, data)
       .pipe(

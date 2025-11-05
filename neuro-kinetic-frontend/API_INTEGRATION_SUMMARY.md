@@ -154,3 +154,4 @@ this.apiService.getAllMetrics().subscribe({
 
 **Frontend is now fully synchronized with backend API!** 🚀
 
+

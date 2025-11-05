@@ -1,2 +1,60 @@
-// Additional styles if needed
+// Delete confirmation dialog styling to match edit dialog
+::ng-deep .confirm-delete-dialog {
+  .p-dialog {
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  }
 
+  .p-dialog-header {
+    padding: 1rem 1.25rem;
+    background: linear-gradient(90deg, rgba(30,41,59,0.9), rgba(2,6,23,0.9));
+    color: #e5e7eb;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .p-dialog-content {
+    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+    color: #cbd5e1;
+  }
+
+  .p-dialog-footer {
+    padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: transparent;
+  }
+
+  // Prime buttons look-and-feel
+  .p-button {
+    font-weight: 600;
+  }
+
+  .p-button.p-button-secondary {
+    background: rgba(148,163,184,0.15);
+    border: 1px solid rgba(148,163,184,0.35);
+    color: #e2e8f0;
+  }
+
+  .p-button.p-button-danger, .p-button.p-button-danger:enabled:hover {
+    box-shadow: 0 8px 20px rgba(239,68,68,0.25);
+  }
+
+  // Icon-only action buttons sizing
+  .dialog-action.p-button-icon-only {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .dialog-action .p-button-icon {
+    font-size: 1rem;
+  }
+}
+
+// Backdrop refinement
+::ng-deep .confirm-delete-mask {
+  backdrop-filter: blur(2px);
+}

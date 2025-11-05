@@ -82,3 +82,4 @@ ng serve
 - NgModule approach maintained (not migrated to standalone)
 - All features should work as before
 
+

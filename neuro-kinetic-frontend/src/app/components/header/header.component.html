@@ -18,7 +18,7 @@
       <!-- User Info (Hidden when sidebar collapsed) -->
       <div class="text-right" [class.hidden]="sidebarCollapsed">
         <div class="text-white text-sm font-semibold truncate max-w-[150px]">{{ getUserDisplayName() }}</div>
-        <div class="text-gray-400 text-xs truncate max-w-[150px]">{{ currentUser?.email }}</div>
+        <!-- <div class="text-gray-400 text-xs truncate max-w-[150px]">{{ currentUser?.email }}</div> -->
         <div *ngIf="isAdmin()" class="mt-0.5">
           <span class="px-2 py-0.5 bg-red-500/20 text-red-400 rounded text-xs font-semibold">Admin</span>
         </div>

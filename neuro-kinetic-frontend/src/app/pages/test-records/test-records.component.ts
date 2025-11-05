@@ -38,6 +38,11 @@ export class TestRecordsComponent implements OnInit {
   selectedRecord: UserTestRecord | null = null;
   isEditMode: boolean = false;
 
+  // Delete modal state
+  showDeleteDialog: boolean = false;
+  deleteRecordId: number | null = null;
+  deleting: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
@@ -132,32 +137,46 @@ export class TestRecordsComponent implements OnInit {
     }
   }
 
-  deleteRecord(event: Event, id: number) {
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: 'Are you sure you want to delete this test record?',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.apiService.deleteUserTestRecord(id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Test record deleted successfully'
-            });
-            this.loadRecords();
-          },
-          error: (error) => {
-            console.error('Error deleting record:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to delete test record. Please try again.'
-            });
-          }
+  onPageSizeChange() {
+    this.currentPage = 1;
+    this.loadRecords();
+  }
+
+  openDeleteDialog(recordId: number) {
+    this.deleteRecordId = recordId;
+    this.showDeleteDialog = true;
+  }
+
+  confirmDelete() {
+    if (this.deleteRecordId == null) return;
+    this.deleting = true;
+    this.apiService.deleteUserTestRecord(this.deleteRecordId).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Deleted',
+          detail: 'Test record deleted successfully'
         });
+        this.deleting = false;
+        this.showDeleteDialog = false;
+        this.deleteRecordId = null;
+        this.loadRecords();
+      },
+      error: (error) => {
+        console.error('Error deleting record:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete test record. Please try again.'
+        });
+        this.deleting = false;
       }
     });
+  }
+
+  cancelDelete() {
+    this.showDeleteDialog = false;
+    this.deleteRecordId = null;
   }
 
   viewRecord(id: number) {

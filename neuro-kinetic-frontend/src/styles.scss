@@ -31,3 +31,52 @@ html {
 * {
   transition: all 0.3s ease;
 }
+
+/* Large Screen Optimizations */
+@media (min-width: 1920px) {
+  /* Limit maximum content width for readability */
+  .container {
+    max-width: 1920px;
+  }
+  
+  /* Improve readability on large screens */
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  /* Better spacing for large screens */
+  section {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  /* For 2K and larger screens */
+  .container {
+    max-width: 2400px;
+  }
+  
+  body {
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  
+  /* Even better spacing for 2K+ screens */
+  section {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+/* Ultra-wide screen optimizations */
+@media (min-width: 3440px) {
+  .container {
+    max-width: 2800px;
+  }
+  
+  body {
+    font-size: 18px;
+  }
+}

@@ -1,2 +1,111 @@
-// Additional styles if needed
+// Large Screen Responsive Styles
 
+@media (min-width: 1920px) {
+  // For very large screens (4K, ultrawide)
+  section {
+    .container {
+      max-width: 1920px;
+    }
+  }
+
+  // Improve card spacing on large screens
+  .grid {
+    gap: 1.5rem;
+  }
+
+  // Better chart layout on large screens
+  canvas {
+    max-height: 400px;
+  }
+}
+
+@media (min-width: 2560px) {
+  // For 2K and larger screens
+  section {
+    .container {
+      max-width: 2400px;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  // Scale up fonts slightly
+  h1 {
+    font-size: 4rem;
+  }
+
+  .grid {
+    gap: 2rem;
+  }
+}
+
+// Improve card appearance on large screens
+@media (min-width: 1440px) {
+  .bg-white\/10 {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// Better chart responsiveness
+@media (min-width: 1920px) {
+  .h-64 {
+    height: 20rem; // Increase chart height on large screens
+  }
+  
+  // Better card sizing
+  .bg-white\/10 {
+    padding: 1.75rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  .h-64 {
+    height: 22rem; // Even taller charts on 2K+ screens
+  }
+  
+  .bg-white\/10 {
+    padding: 2rem;
+  }
+}
+
+// Professional Chart Container Styles
+.bg-gradient-to-br {
+  // Smooth chart animations
+  canvas {
+    transition: opacity 0.3s ease;
+  }
+  
+  // Hover effects
+  &:hover {
+    transform: translateY(-2px);
+    
+    canvas {
+      opacity: 0.95;
+    }
+  }
+}
+
+// Active status badge animation
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+}
+
+.animate-pulse {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

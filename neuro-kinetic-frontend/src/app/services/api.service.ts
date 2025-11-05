@@ -441,7 +441,23 @@ export class ApiService {
 
   // ========== ADMIN DASHBOARD ==========
 
-  getAdminDashboardAnalytics(): Observable<AdminDashboardAnalytics> {
-    return this.http.get<AdminDashboardAnalytics>(`${this.apiUrl}/admin/dashboard/analytics`);
+  getAdminDashboardAnalytics(params?: {
+    days?: number;      // Last N days (e.g., 15, 30)
+    months?: number;    // Last N months (e.g., 6, 12)
+    years?: number;     // Last N years (e.g., 1, 2, 3)
+  }): Observable<AdminDashboardAnalytics> {
+    let httpParams = new HttpParams();
+    
+    if (params?.days) {
+      httpParams = httpParams.set('days', params.days.toString());
+    }
+    if (params?.months) {
+      httpParams = httpParams.set('months', params.months.toString());
+    }
+    if (params?.years) {
+      httpParams = httpParams.set('years', params.years.toString());
+    }
+    
+    return this.http.get<AdminDashboardAnalytics>(`${this.apiUrl}/admin/dashboard/analytics`, { params: httpParams });
   }
 }

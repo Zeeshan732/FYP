@@ -16,6 +16,36 @@ export class AdminDashboardComponent implements OnInit {
   loading = false;
   error = '';
   
+  // Time range selectors
+  selectedDays: number = 30;      // Default: Last 30 days
+  selectedMonths: number = 12;   // Default: Last 12 months
+  selectedYears: number = 5;     // Default: Last 5 years
+  
+  // Time range options
+  daysOptions = [
+    { label: 'Last 7 Days', value: 7 },
+    { label: 'Last 15 Days', value: 15 },
+    { label: 'Last 30 Days', value: 30 },
+    { label: 'Last 60 Days', value: 60 },
+    { label: 'Last 90 Days', value: 90 }
+  ];
+  
+  monthsOptions = [
+    { label: 'Last 3 Months', value: 3 },
+    { label: 'Last 6 Months', value: 6 },
+    { label: 'Last 12 Months', value: 12 },
+    { label: 'Last 18 Months', value: 18 },
+    { label: 'Last 24 Months', value: 24 }
+  ];
+  
+  yearsOptions = [
+    { label: 'Last 1 Year', value: 1 },
+    { label: 'Last 2 Years', value: 2 },
+    { label: 'Last 3 Years', value: 3 },
+    { label: 'Last 5 Years', value: 5 },
+    { label: 'Last 10 Years', value: 10 }
+  ];
+  
   // Chart references
   @ViewChild('usageByDayChart') usageByDayChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('usageByMonthChart') usageByMonthChartRef!: ElementRef<HTMLCanvasElement>;
@@ -45,8 +75,12 @@ export class AdminDashboardComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    // Fetch real analytics from backend API
-    this.apiService.getAdminDashboardAnalytics().subscribe({
+    // Fetch real analytics from backend API with time range parameters
+    this.apiService.getAdminDashboardAnalytics({
+      days: this.selectedDays,
+      months: this.selectedMonths,
+      years: this.selectedYears
+    }).subscribe({
       next: (data: AdminDashboardAnalytics) => {
         this.analytics = data;
         this.loading = false;
@@ -89,106 +123,357 @@ export class AdminDashboardComponent implements OnInit {
 
     const Chart = (window as any).Chart;
 
-    // Usage by Day Chart
+    // Usage by Day Chart - Professional Design
     if (this.usageByDayChartRef) {
       const ctx = this.usageByDayChartRef.nativeElement.getContext('2d');
+      if (!ctx) return;
+      
+      // Create gradient for area fill
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, 'rgba(20, 184, 166, 0.3)');
+      gradient.addColorStop(0.5, 'rgba(20, 184, 166, 0.15)');
+      gradient.addColorStop(1, 'rgba(20, 184, 166, 0.05)');
+      
       const chart = new Chart(ctx, {
         type: 'line',
         data: {
           labels: this.analytics.usageByDay.map((u: UsageStatistic) => u.label),
           datasets: [{
-            label: 'Tests per Day',
+            label: 'Tests',
             data: this.analytics.usageByDay.map((u: UsageStatistic) => u.count),
-            borderColor: 'rgb(16, 185, 129)',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderColor: 'rgba(20, 184, 166, 1)',
+            backgroundColor: gradient,
+            borderWidth: 3,
             tension: 0.4,
-            fill: true
+            fill: true,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: 'rgba(20, 184, 166, 1)',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: 'rgba(20, 184, 166, 1)',
+            pointHoverBorderColor: '#ffffff',
+            pointHoverBorderWidth: 3
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: {
+            duration: 1500,
+            easing: 'easeInOutQuart'
+          },
           plugins: {
             legend: {
-              labels: { color: 'rgb(209, 213, 219)' }
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              padding: 12,
+              titleColor: 'rgb(209, 213, 219)',
+              bodyColor: 'rgb(209, 213, 219)',
+              borderColor: 'rgba(20, 184, 166, 0.5)',
+              borderWidth: 1,
+              cornerRadius: 8,
+              displayColors: false,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 16,
+                weight: '600'
+              },
+              callbacks: {
+                label: function(context: any) {
+                  return `${context.parsed.y} tests`;
+                }
+              }
             }
           },
           scales: {
-            x: { ticks: { color: 'rgb(209, 213, 219)' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
-            y: { ticks: { color: 'rgb(209, 213, 219)' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+            x: {
+              ticks: {
+                color: 'rgba(209, 213, 219, 0.7)',
+                font: {
+                  size: 10,
+                  weight: '500'
+                },
+                maxRotation: 45,
+                minRotation: 0
+              },
+              grid: {
+                display: false,
+                drawBorder: false
+              },
+              border: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: 'rgba(209, 213, 219, 0.7)',
+                font: {
+                  size: 11,
+                  weight: '500'
+                },
+                stepSize: null,
+                callback: function(value: any) {
+                  return value.toLocaleString();
+                }
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.08)',
+                drawBorder: false,
+                lineWidth: 1
+              },
+              border: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
           }
         }
       });
       this.charts.push(chart);
     }
 
-    // Usage by Month Chart
+    // Usage by Month Chart - Professional Design
     if (this.usageByMonthChartRef) {
       const ctx = this.usageByMonthChartRef.nativeElement.getContext('2d');
+      if (!ctx) return;
+      
+      // Create gradient for bars
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, 'rgba(16, 185, 129, 0.9)');
+      gradient.addColorStop(0.5, 'rgba(16, 185, 129, 0.7)');
+      gradient.addColorStop(1, 'rgba(16, 185, 129, 0.4)');
+      
       const chart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: this.analytics.usageByMonth.map((u: UsageStatistic) => u.label),
           datasets: [{
-            label: 'Tests per Month',
+            label: 'Tests',
             data: this.analytics.usageByMonth.map((u: UsageStatistic) => u.count),
-            backgroundColor: 'rgba(16, 185, 129, 0.8)',
-            borderColor: 'rgb(16, 185, 129)',
-            borderWidth: 1
+            backgroundColor: gradient,
+            borderColor: 'rgba(16, 185, 129, 1)',
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false,
+            maxBarThickness: 60
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: {
+            duration: 1500,
+            easing: 'easeInOutQuart'
+          },
           plugins: {
             legend: {
-              labels: { color: 'rgb(209, 213, 219)' }
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              padding: 12,
+              titleColor: 'rgb(209, 213, 219)',
+              bodyColor: 'rgb(209, 213, 219)',
+              borderColor: 'rgba(16, 185, 129, 0.5)',
+              borderWidth: 1,
+              cornerRadius: 8,
+              displayColors: false,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 16,
+                weight: '600'
+              },
+              callbacks: {
+                label: function(context: any) {
+                  return `${context.parsed.y} tests`;
+                }
+              }
             }
           },
           scales: {
-            x: { ticks: { color: 'rgb(209, 213, 219)' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
-            y: { ticks: { color: 'rgb(209, 213, 219)' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+            x: {
+              ticks: {
+                color: 'rgba(209, 213, 219, 0.7)',
+                font: {
+                  size: 11,
+                  weight: '500'
+                },
+                maxRotation: 45,
+                minRotation: 0
+              },
+              grid: {
+                display: false,
+                drawBorder: false
+              },
+              border: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: 'rgba(209, 213, 219, 0.7)',
+                font: {
+                  size: 11,
+                  weight: '500'
+                },
+                stepSize: null,
+                callback: function(value: any) {
+                  return value.toLocaleString();
+                }
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.08)',
+                drawBorder: false,
+                lineWidth: 1
+              },
+              border: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
           }
         }
       });
       this.charts.push(chart);
     }
 
-    // Usage by Year Chart
+    // Usage by Year Chart - Professional Design
     if (this.usageByYearChartRef) {
       const ctx = this.usageByYearChartRef.nativeElement.getContext('2d');
+      if (!ctx) return;
+      
+      // Create gradient for bars (blue to purple)
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, 'rgba(59, 130, 246, 0.9)');
+      gradient.addColorStop(0.5, 'rgba(99, 102, 241, 0.8)');
+      gradient.addColorStop(1, 'rgba(139, 92, 246, 0.6)');
+      
       const chart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: this.analytics.usageByYear.map((u: UsageStatistic) => u.label),
           datasets: [{
-            label: 'Tests per Year',
+            label: 'Tests',
             data: this.analytics.usageByYear.map((u: UsageStatistic) => u.count),
-            backgroundColor: 'rgba(59, 130, 246, 0.8)',
-            borderColor: 'rgb(59, 130, 246)',
-            borderWidth: 1
+            backgroundColor: gradient,
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false,
+            maxBarThickness: 80
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: {
+            duration: 1500,
+            easing: 'easeInOutQuart'
+          },
           plugins: {
             legend: {
-              labels: { color: 'rgb(209, 213, 219)' }
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              padding: 12,
+              titleColor: 'rgb(209, 213, 219)',
+              bodyColor: 'rgb(209, 213, 219)',
+              borderColor: 'rgba(59, 130, 246, 0.5)',
+              borderWidth: 1,
+              cornerRadius: 8,
+              displayColors: false,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 16,
+                weight: '600'
+              },
+              callbacks: {
+                label: function(context: any) {
+                  return `${context.parsed.y.toLocaleString()} tests`;
+                }
+              }
             }
           },
           scales: {
-            x: { ticks: { color: 'rgb(209, 213, 219)' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
-            y: { ticks: { color: 'rgb(209, 213, 219)' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+            x: {
+              ticks: {
+                color: 'rgba(209, 213, 219, 0.7)',
+                font: {
+                  size: 12,
+                  weight: '600'
+                },
+                maxRotation: 0,
+                minRotation: 0
+              },
+              grid: {
+                display: false,
+                drawBorder: false
+              },
+              border: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: 'rgba(209, 213, 219, 0.7)',
+                font: {
+                  size: 11,
+                  weight: '500'
+                },
+                stepSize: null,
+                callback: function(value: any) {
+                  if (value >= 1000) {
+                    return (value / 1000).toFixed(1) + 'K';
+                  }
+                  return value.toLocaleString();
+                }
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.08)',
+                drawBorder: false,
+                lineWidth: 1
+              },
+              border: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
           }
         }
       });
       this.charts.push(chart);
     }
 
-    // Result Distribution Chart
+    // Result Distribution Chart - Professional Design
     if (this.resultDistributionChartRef) {
       const ctx = this.resultDistributionChartRef.nativeElement.getContext('2d');
+      if (!ctx) return;
+      
       const chart = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -200,26 +485,74 @@ export class AdminDashboardComponent implements OnInit {
               this.analytics.testResultsDistribution.uncertain
             ],
             backgroundColor: [
-              'rgba(239, 68, 68, 0.8)',
-              'rgba(34, 197, 94, 0.8)',
-              'rgba(234, 179, 8, 0.8)'
+              'rgba(239, 68, 68, 0.9)',
+              'rgba(34, 197, 94, 0.9)',
+              'rgba(234, 179, 8, 0.9)'
             ],
             borderColor: [
-              'rgb(239, 68, 68)',
-              'rgb(34, 197, 94)',
-              'rgb(234, 179, 8)'
+              'rgba(239, 68, 68, 1)',
+              'rgba(34, 197, 94, 1)',
+              'rgba(234, 179, 8, 1)'
             ],
-            borderWidth: 2
+            borderWidth: 3,
+            hoverBorderWidth: 4,
+            hoverOffset: 8
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: {
+            duration: 1500,
+            easing: 'easeInOutQuart',
+            animateRotate: true,
+            animateScale: true
+          },
           plugins: {
             legend: {
               position: 'bottom',
-              labels: { color: 'rgb(209, 213, 219)' }
+              labels: {
+                color: 'rgba(209, 213, 219, 0.9)',
+                padding: 15,
+                font: {
+                  size: 12,
+                  weight: '600'
+                },
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              padding: 12,
+              titleColor: 'rgb(209, 213, 219)',
+              bodyColor: 'rgb(209, 213, 219)',
+              borderColor: 'rgba(139, 92, 246, 0.5)',
+              borderWidth: 1,
+              cornerRadius: 8,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 16,
+                weight: '600'
+              },
+              callbacks: {
+                label: function(context: any) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${label}: ${value.toLocaleString()} (${percentage}%)`;
+                }
+              }
             }
+          },
+          cutout: '60%',
+          interaction: {
+            intersect: true,
+            mode: 'point'
           }
         }
       });
@@ -287,6 +620,18 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   refreshData() {
+    this.loadAnalytics();
+  }
+
+  onDaysChange() {
+    this.loadAnalytics();
+  }
+
+  onMonthsChange() {
+    this.loadAnalytics();
+  }
+
+  onYearsChange() {
     this.loadAnalytics();
   }
 

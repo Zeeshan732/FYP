@@ -15,11 +15,19 @@ export class SignupModalComponent implements OnInit, OnDestroy {
   lastName = '';
   email = '';
   institution = '';
+  role: 'Public' | 'Researcher' | 'MedicalProfessional' = 'Public';
   password = '';
   confirmPassword = '';
   error = '';
   loading = false;
   private subscription: Subscription = new Subscription();
+
+  // Available roles for signup (Admin cannot be self-selected)
+  roleOptions = [
+    { label: 'Public User', value: 'Public' },
+    { label: 'Researcher', value: 'Researcher' },
+    { label: 'Medical Professional', value: 'MedicalProfessional' }
+  ];
 
   constructor(
     private modalService: ModalService,
@@ -37,6 +45,7 @@ export class SignupModalComponent implements OnInit, OnDestroy {
           this.lastName = '';
           this.email = '';
           this.institution = '';
+          this.role = 'Public';
           this.password = '';
           this.confirmPassword = '';
           this.error = '';
@@ -91,7 +100,8 @@ export class SignupModalComponent implements OnInit, OnDestroy {
       firstName: this.firstName,
       lastName: this.lastName,
       institution: this.institution || undefined,
-      researchFocus: undefined
+      researchFocus: undefined,
+      role: this.role
     }).subscribe({
       next: (response) => {
         this.loading = false;
