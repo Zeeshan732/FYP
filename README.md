@@ -1,4 +1,4 @@
-# 🚀 FYP Backend API
+# 🚀 FYP (Neuro-Kinetic)
 
 <div align="center">
 
