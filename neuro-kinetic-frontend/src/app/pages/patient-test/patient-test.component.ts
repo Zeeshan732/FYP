@@ -197,45 +197,37 @@ export class PatientTestComponent implements OnInit, OnDestroy {
   }
 
   private processTestResult(record: UserTestRecord) {
-    // TODO: When ML model is integrated, call analysis API here
-    // For now, the backend will handle the analysis when status changes
-    // The frontend just needs to wait for backend processing
-    
-    // Simulate processing delay (backend should process in background)
-    // In production, you might want to poll for status updates or use webhooks
-    setTimeout(() => {
-      // Check if record was updated by backend
-      this.apiService.getUserTestRecord(record.id).subscribe({
-        next: (updatedRecord) => {
-          if (updatedRecord.status === 'Completed') {
-            this.testResult = updatedRecord;
-            this.testCompleted = true;
-            this.isProcessing = false;
-            
-            // Stop audio stream
-            if (this.audioStream) {
-              this.audioStream.getTracks().forEach(track => track.stop());
-            }
-          } else {
-            // Still processing, check again after delay
-            setTimeout(() => this.processTestResult(record), 3000);
-          }
-        },
-        error: (error) => {
-          console.error('Error checking test record:', error);
-          // If record still exists with Pending status, that's okay
-          this.testResult = record;
-          this.testCompleted = true;
-          this.isProcessing = false;
+    // When ML model integration is ready, this method can poll or use websockets.
+    // For now, we do a single fetch and then stop, so the UI doesn't loop forever.
+    this.apiService.getUserTestRecord(record.id).subscribe({
+      next: (updatedRecord) => {
+        this.testResult = updatedRecord;
+        this.testCompleted = true;
+        this.isProcessing = false;
+
+        if (updatedRecord.status !== 'Completed') {
+          // Backend is still processing asynchronously – show a friendly message.
           this.error = 'Test submitted. Results will be available once processing completes.';
-          
-          // Stop audio stream
-          if (this.audioStream) {
-            this.audioStream.getTracks().forEach(track => track.stop());
-          }
         }
-      });
-    }, 2000);
+
+        // Stop audio stream
+        if (this.audioStream) {
+          this.audioStream.getTracks().forEach(track => track.stop());
+        }
+      },
+      error: (error) => {
+        console.error('Error checking test record:', error);
+        // Show the record we have and stop the loader so the UI is not stuck.
+        this.testResult = record;
+        this.testCompleted = true;
+        this.isProcessing = false;
+        this.error = 'Test submitted. Results will be available once processing completes.';
+
+        if (this.audioStream) {
+          this.audioStream.getTracks().forEach(track => track.stop());
+        }
+      }
+    });
   }
 
   startNewTest() {

@@ -99,30 +99,40 @@
     <!-- Statistics Cards -->
     <div *ngIf="analytics && !loading" class="max-w-[1600px] mx-auto mb-12">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 xl:gap-6 2xl:gap-8 mb-8">
-        <!-- Total Users -->
+        <!-- Registered Users -->
         <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-5 sm:p-6 lg:p-6 xl:p-5 2xl:p-7 text-center hover:bg-white/15 transition-all duration-200">
-          <div class="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl 2xl:text-4xl font-bold text-emerald-400 mb-2">{{ analytics.totalUsers | number }}</div>
-          <div class="text-xs sm:text-sm text-gray-300">Total Users</div>
+          <div class="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl 2xl:text-4xl font-bold text-emerald-400 mb-2">
+            {{ analytics.totalRegisteredUsers | number }}
+          </div>
+          <div class="text-xs sm:text-sm text-gray-300">Registered Users</div>
+        </div>
+
+        <!-- Active Users -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-5 sm:p-6 lg:p-6 xl:p-5 2xl:p-7 text-center hover:bg-white/15 transition-all duration-200">
+          <div class="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl 2xl:text-4xl font-bold text-sky-400 mb-2">
+            {{ analytics.activeUsers | number }}
+          </div>
+          <div class="text-xs sm:text-sm text-gray-300">Active Users</div>
+          <div class="text-xs text-gray-400 mt-1">
+            {{ analytics.activationRate | number:'1.0-1' }}% Activation
+          </div>
         </div>
 
         <!-- Total Tests -->
         <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-5 sm:p-6 lg:p-6 xl:p-5 2xl:p-7 text-center hover:bg-white/15 transition-all duration-200">
-          <div class="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl 2xl:text-4xl font-bold text-blue-400 mb-2">{{ analytics.totalTests | number }}</div>
+          <div class="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl 2xl:text-4xl font-bold text-blue-400 mb-2">
+            {{ analytics.totalTests | number }}
+          </div>
           <div class="text-xs sm:text-sm text-gray-300">Total Tests</div>
         </div>
 
         <!-- Positive Cases -->
         <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-5 sm:p-6 lg:p-6 xl:p-5 2xl:p-7 text-center hover:bg-white/15 transition-all duration-200">
-          <div class="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl 2xl:text-4xl font-bold text-red-400 mb-2">{{ analytics.positiveCases | number }}</div>
+          <div class="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl 2xl:text-4xl font-bold text-red-400 mb-2">
+            {{ analytics.positiveCases | number }}
+          </div>
           <div class="text-xs sm:text-sm text-gray-300">Positive Cases</div>
           <div class="text-xs text-gray-400 mt-1">{{ getPositivePercentage() }}%</div>
-        </div>
-
-        <!-- Negative Cases -->
-        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-5 sm:p-6 lg:p-6 xl:p-5 2xl:p-7 text-center hover:bg-white/15 transition-all duration-200">
-          <div class="text-3xl sm:text-4xl lg:text-4xl xl:text-3xl 2xl:text-4xl font-bold text-green-400 mb-2">{{ analytics.negativeCases | number }}</div>
-          <div class="text-xs sm:text-sm text-gray-300">Negative Cases</div>
-          <div class="text-xs text-gray-400 mt-1">{{ getNegativePercentage() }}%</div>
         </div>
       </div>
 
@@ -148,7 +158,7 @@
         <!-- Test Completion Rate -->
         <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 text-center">
           <div class="text-3xl font-bold text-purple-400 mb-2"
-               pTooltip="{{ (analytics.totalTests / (analytics.totalUsers || 1)) | number:'1.0-4' }}"
+               pTooltip="{{ (analytics.totalTests / (analytics.totalRegisteredUsers || 1)) | number:'1.0-4' }}"
                tooltipPosition="top">
             {{ getTestsPerUser() | number:'1.0-1' }}
           </div>

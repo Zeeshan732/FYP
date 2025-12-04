@@ -600,8 +600,14 @@ export class AdminDashboardComponent implements OnInit {
       });
     }
 
+    const totalRegisteredUsers = 1250;
+    const activeUsers = 800;
+    const activationRate = Math.round((activeUsers / totalRegisteredUsers) * 1000) / 10; // one decimal place
+
     return {
-      totalUsers: 1250,
+      totalRegisteredUsers,
+      activeUsers,
+      activationRate,
       totalTests: 3420,
       positiveCases: 856,
       negativeCases: 2314,
@@ -655,8 +661,8 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   getTestsPerUser(): number {
-    if (!this.analytics || this.analytics.totalUsers === 0) return 0;
-    return Math.round((this.analytics.totalTests / this.analytics.totalUsers) * 10) / 10;
+    if (!this.analytics || this.analytics.totalRegisteredUsers === 0) return 0;
+    return Math.round((this.analytics.totalTests / this.analytics.totalRegisteredUsers) * 10) / 10;
   }
 
   // Helper for template

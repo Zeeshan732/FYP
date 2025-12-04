@@ -259,8 +259,26 @@ export interface UserTestRecordRequest {
 }
 
 // Admin Dashboard Analytics
+// NOTE: Shape must stay in sync with AdminDashboardAnalyticsDto from the backend.
 export interface AdminDashboardAnalytics {
-  totalUsers: number;
+  /**
+   * Total number of registered users in the system (all roles).
+   * Example: 5
+   */
+  totalRegisteredUsers: number;
+
+  /**
+   * Users who have performed at least one test in the selected period.
+   * Example: 3
+   */
+  activeUsers: number;
+
+  /**
+   * Percentage of active users out of total registered users.
+   * Example: 60.0 (represents 60%)
+   */
+  activationRate: number;
+
   totalTests: number;
   positiveCases: number;
   negativeCases: number;
