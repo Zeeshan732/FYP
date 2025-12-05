@@ -1,4 +1,4 @@
-# 🚀 FYP (Neuro-Kinetic)
+# 🚀 FYP (Parkinson's)
 
 <div align="center">
 
